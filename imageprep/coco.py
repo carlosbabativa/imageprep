@@ -276,7 +276,7 @@ def coco_for_detectron2(img_dir, label_dir, bbox_mode='BoxMode.XYXY_ABS'):
         record["image_id"] = idx
 
         annotations = v['annotations']
-        if annotations == []:
+        if annotations != []:
             xmin = annotations[0]['bbox'][0]
             ymin = annotations[0]['bbox'][1]
             xmax = annotations[0]['bbox'][2]
