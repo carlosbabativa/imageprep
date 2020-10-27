@@ -276,23 +276,24 @@ def coco_for_detectron2(img_dir, label_dir, bbox_mode='BoxMode.XYXY_ABS'):
         record["image_id"] = idx
 
         annotations = v['annotations']
+        if annotations == []:
+            xmin = annotations[0]['bbox'][0]
+            ymin = annotations[0]['bbox'][1]
+            xmax = annotations[0]['bbox'][2]
+            ymax = annotations[0]['bbox'][3]
 
-        xmin = annotations[0]['bbox'][0]
-        ymin = annotations[0]['bbox'][1]
-        xmax = annotations[0]['bbox'][2]
-        ymax = annotations[0]['bbox'][3]
+            poly = [
+                (xmin, ymin), (xmax, ymin),
+                (xmax, ymax), (xmin, ymax)
+            ]
+            poly = list(itertools.chain.from_iterable(poly))
 
-        poly = [
-            (xmin, ymin), (xmax, ymin),
-            (xmax, ymax), (xmin, ymax)
-        ]
-        poly = list(itertools.chain.from_iterable(poly))
+            for j in range(0, len(annotations)):
+                annotations[j]['bbox_mode'] = bbox_mode
+                annotations[j]['segmentation'] = [poly]
 
-        for j in range(0, len(annotations)):
-            annotations[j]['bbox_mode'] = bbox_mode
-            annotations[j]['segmentation'] = [poly]
-
-        record["annotations"] = annotations
+            record["annotations"] = annotations
+            
         dataset_dicts.append(record)
 
     return dataset_dicts
